@@ -1,15 +1,9 @@
 {
   "version": 2,
-  // Use a custom install command to allow pnpm to regenerate the lockfile
-  // when dependencies and optional dependencies change. Without this,
-  // `pnpm install --frozen-lockfile` fails whenever package.json differs
-  // from pnpm-lock.yaml. This setting instructs Vercel to run the
-  // installation without the frozen lockfile.
+
   "installCommand": "pnpm install --no-frozen-lockfile",
 
-  // Explicitly set the build command to ensure our custom build script
-  // runs after installation. Vercel defaults to `pnpm run build` when
-  // detecting pnpm, but setting it here clarifies the workflow.
+
   "buildCommand": "pnpm run build",
   "builds": [
     {
