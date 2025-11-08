@@ -4,10 +4,12 @@ import react from "@vitejs/plugin-react";
 import fs from "node:fs";
 import path from "path";
 import { defineConfig } from "vite";
-import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
+// Removed the manus runtime plugin because it depends on Rollup's native
+// bindings, which may cause optional dependency resolution errors on
+// serverless environments like Vercel. Reintroduce it locally if needed.
 
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime()];
+const plugins = [react(), tailwindcss(), jsxLocPlugin()];
 
 export default defineConfig({
   plugins,
