@@ -1,10 +1,8 @@
 import "dotenv/config";
 import express from "express";
-import { createServer } from "http";
 import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
-import { serveStatic, setupVite } from "./vite";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 
 /**
@@ -18,7 +16,6 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
  */
 export async function createApp() {
   const app = express();
-  const server = createServer(app);
 
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
@@ -36,17 +33,14 @@ export async function createApp() {
     }),
   );
 
-  // In development attach the Vite middleware for hot module reloading
-  if (process.env.NODE_ENV === "development") {
-    await setupVite(app, server);
-  } else {
-    // In production, serve static files from the root-level public directory.
-    // NOTE: On Vercel, express.static is ignored and static assets must live
-    // under the `public/` folder. See the "Express on Vercel" docs: assets
-    // placed in the `public/**` directory are automatically served via CDN
-    // and express.static() calls are ignored【382487564759194†screenshot】.
-    serveStatic(app);
-  }
+  // NOTE: We deliberately omit calling setupVite or serveStatic here. When
+  // running on Vercel, static assets under the `public/` directory are
+  // automatically served by the platform, and express.static() calls are
+  // ignored【382487564759194†screenshot】. During local development, the
+  // dev server is run via `npm run dev`, which uses server/_core/index.ts
+  // and attaches the Vite middleware. This separation avoids relying on
+  // import.meta and filesystem paths that may not be available in serverless
+  // environments.
 
   return app;
 }
